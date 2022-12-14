@@ -5,7 +5,7 @@ Functionality is not guaranteed in any way and errors are only "silenced" when e
 
 For new projects, please use the latest version of Kirby CMS.
 
-You can find the repository for the Kirby 2 Core folder [here](https://github.com/rasteiner/k2-panel-compat).
+You can find the repository for the Kirby 2 panel folder [here](https://github.com/rasteiner/k2-panel-compat).
 
 ## Kirby 2 - EOL
 
