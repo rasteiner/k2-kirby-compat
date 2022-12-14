@@ -615,7 +615,7 @@
 
 		/* Sniffer functions */
 		protected function sniff_empty() {
-			if (strlen($this->header) === 0) {
+			if (strlen($this->header ?? "") === 0) {
 				$this->detected_type    = 'inode/x-empty';
 				return true;
 			}

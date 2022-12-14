@@ -3,9 +3,8 @@ PHP errors for cool kids
 
 [![Total Downloads](https://img.shields.io/packagist/dm/filp/whoops.svg)](https://packagist.org/packages/filp/whoops)
 [![Latest Version](http://img.shields.io/packagist/v/filp/whoops.svg)](https://packagist.org/packages/filp/whoops)
-[![Reference Status](https://www.versioneye.com/php/filp:whoops/reference_badge.svg?style=flat)](https://www.versioneye.com/php/filp:whoops/references)
-[![Dependency Status](https://www.versioneye.com/php/filp:whoops/1.1.5/badge.svg)](https://www.versioneye.com/php/filp:whoops/1.1.5)
-[![Build Status](https://travis-ci.org/filp/whoops.svg?branch=master)](https://travis-ci.org/filp/whoops)
+[![Build Status on newer versions](https://github.com/filp/whoops/workflows/Tests/badge.svg)](https://github.com/filp/whoops/actions?query=workflow%3ATests)
+[![Build Status on older versions](https://travis-ci.org/filp/whoops.svg?branch=master)](https://travis-ci.org/filp/whoops)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/filp/whoops/badges/quality-score.png?s=6225c36f2a2dd1fdca11ecc7b10b29105c8c62bd)](https://scrutinizer-ci.com/g/filp/whoops)
 [![Code Coverage](https://scrutinizer-ci.com/g/filp/whoops/badges/coverage.png?s=711feb2069144d252d111b211965ffb19a7d09a8)](https://scrutinizer-ci.com/g/filp/whoops)
 
@@ -28,21 +27,26 @@ powerful stacked error handling system.
 - Easy to extend and integrate with existing libraries
 - Clean, well-structured & tested code-base
 
+## Sponsors
+
+<a href="https://blackfire.io/docs/introduction?utm_source=whoops&amp;utm_medium=github_readme&amp;utm_campaign=logo"><img src="https://i.imgur.com/zR8rsqk.png" alt="Blackfire.io" width="254" height="64"></a>
+
 ## Installing
-If you use Laravel 4 or Laravel 5.5+, you already have Whoops. There are also community-provided instructions on how to integrate Whoops into
+If you use Laravel 4, Laravel 5.5+ or [Mezzio](https://docs.mezzio.dev/mezzio/), you already have Whoops. There are also community-provided instructions on how to integrate Whoops into
 [Silex 1](https://github.com/whoops-php/silex-1),
 [Silex 2](https://github.com/texthtml/whoops-silex),
 [Phalcon](https://github.com/whoops-php/phalcon),
 [Laravel 3](https://gist.github.com/hugomrdias/5169713#file-start-php),
 [Laravel 5](https://github.com/GrahamCampbell/Laravel-Exceptions),
-[CakePHP 2](https://github.com/oldskool/WhoopsCakephp/tree/cake2),
-[CakePHP 3](https://github.com/oldskool/WhoopsCakephp),
+[CakePHP 3](https://github.com/dereuromark/cakephp-whoops/tree/cake3),
+[CakePHP 4](https://github.com/dereuromark/cakephp-whoops),
 [Zend 2](https://github.com/ghislainf/zf2-whoops),
 [Zend 3](https://github.com/Ppito/zf3-whoops),
 [Yii 1](https://github.com/igorsantos07/yii-whoops),
 [FuelPHP](https://github.com/indigophp/fuel-whoops),
 [Slim](https://github.com/zeuxisoo/php-slim-whoops/),
 [Pimple](https://github.com/texthtml/whoops-pimple),
+[Laminas](https://github.com/Ppito/laminas-whoops),
 or any framework consuming [StackPHP middlewares](https://github.com/thecodingmachine/whoops-stackphp)
 or [PSR-7 middlewares](https://github.com/franzliedke/whoops-middleware).
 
@@ -62,9 +66,19 @@ If you are not using any of these frameworks, here's a very simple way to instal
     $whoops->register();
     ```
 
-For more options, have a look at the **example files** in `examples/` to get a feel for how things work. Also take a look at the [API Documentation](docs/API%20Documentation.md) and the list of available handers below.
+For more options, have a look at the **example files** in [`examples/`](./examples) to get a feel for how things work. Also take a look at the [API Documentation](docs/API%20Documentation.md) and the list of available handlers below.
 
 You may also want to override some system calls Whoops does. To do that, extend `Whoops\Util\SystemFacade`, override functions that you want and pass it as the argument to the `Run` constructor.
+
+You may also collect the HTML generated to process it yourself:
+
+```php
+$whoops = new \Whoops\Run;
+$whoops->allowQuit(false);
+$whoops->writeToOutput(false);
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+$html = $whoops->handleException($e);
+```
 
 ### Available Handlers
 
@@ -81,5 +95,3 @@ You can also use pluggable handlers, such as [SOAP handler](https://github.com/w
 ## Authors
 
 This library was primarily developed by [Filipe Dobreira](https://github.com/filp), and is currently maintained by [Denis Sokolov](https://github.com/denis-sokolov). A lot of awesome fixes and enhancements were also sent in by [various contributors](https://github.com/filp/whoops/contributors). Special thanks to [Graham Campbell](https://github.com/GrahamCampbell) and [Markus Staab](https://github.com/staabm) for continuous participation.
-
-This software includes [Prettify](https://github.com/google/code-prettify), licensed under Apache License 2.0. It is bundled only as a performance optimization.

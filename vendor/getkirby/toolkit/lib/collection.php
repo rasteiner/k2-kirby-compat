@@ -77,7 +77,7 @@ class Collection extends I implements Countable {
    *
    * @return int
    */
-  public function count() {
+  public function count(): int {
     return count($this->data);
   }
 
@@ -238,10 +238,10 @@ class Collection extends I implements Countable {
   /**
    * Filter the elements in the array by a callback function
    *
-   * @param  func $callback the callback function
+   * @param  callable $callback the callback function
    * @return Collection
    */
-  public function filter($callback) {
+  public function filter(callable $callback) {
     $collection = clone $this;
     $collection->data = array_filter($collection->data, $callback);
     return $collection;
@@ -393,10 +393,10 @@ class Collection extends I implements Countable {
   /**
    * Map a function to each item in the collection
    *
-   * @param function $callback
+   * @param callable $callback
    * @return Collection
    */
-  public function map($callback) {
+  public function map(callable $callback) {
     $this->data = array_map($callback, $this->data);
     return $this;
   }

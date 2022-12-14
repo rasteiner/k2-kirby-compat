@@ -213,7 +213,7 @@ class Detect {
    */
   public static function iniSize($key) {
 
-    $size = ini_get($key);
+    $size = ini_get($key) ?? "";
     $size = trim($size);
     $last = strtolower($size[strlen($size)-1]);
     switch($last) {

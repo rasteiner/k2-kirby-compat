@@ -287,7 +287,7 @@ class ParsedownExtra extends Parsedown
             );
 
             return array(
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
                 'element' => $Element,
             );
         }
@@ -308,7 +308,7 @@ class ParsedownExtra extends Parsedown
         {
             $Link['element']['attributes'] += $this->parseAttributeData($matches[1]);
 
-            $Link['extent'] += strlen($matches[0]);
+            $Link['extent'] += strlen($matches[0] ?? "");
         }
 
         return $Link;
@@ -341,7 +341,7 @@ class ParsedownExtra extends Parsedown
 
     protected function addDdElement(array $Line, array $Block)
     {
-        $text = substr($Line['text'], 1);
+        $text = substr($Line['text'] ?? "", 1) ?? "";
         $text = trim($text);
 
         unset($Block['dd']);

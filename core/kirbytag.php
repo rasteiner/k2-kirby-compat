@@ -46,8 +46,8 @@ abstract class KirbytagAbstract {
 
         if(!isset($search[$num+1])) break;
 
-        $key   = trim($search[$num]);
-        $value = trim($search[$num+1]);
+        $key   = trim($search[$num] ?? "");
+        $value = trim($search[$num+1] ?? "");
 
         $this->attr[$key] = $value;
         $num = $num+2;

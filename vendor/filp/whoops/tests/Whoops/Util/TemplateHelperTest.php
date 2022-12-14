@@ -16,9 +16,9 @@ class TemplateHelperTest extends TestCase
     private $helper;
 
     /**
-     * {@inheritDoc}
+     * @before
      */
-    public function setUp()
+    public function getReady()
     {
         $this->helper = new TemplateHelper();
     }
@@ -46,7 +46,7 @@ class TemplateHelperTest extends TestCase
         // Test that the escaped string is kinda similar in length, not empty
         $this->assertLessThan(
             10,
-            abs(strlen($original) - strlen($this->helper->escape($original)))
+            abs(strlen($original ?? "") - strlen($this->helper->escape($original ?? "")))
         );
     }
 
@@ -69,7 +69,7 @@ class TemplateHelperTest extends TestCase
     public function testBreakOnDelimiter()
     {
         $this->assertSame(
-            '<div class="delimiter">abc</div>-<div class="delimiter">123</div>-<div class="delimiter">456</div>',
+            '<span class="delimiter">abc</span>-<span class="delimiter">123</span>-<span class="delimiter">456</span>',
             $this->helper->breakOnDelimiter('-', 'abc-123-456')
         );
     }

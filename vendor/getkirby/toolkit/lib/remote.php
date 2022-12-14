@@ -162,7 +162,7 @@ class Remote {
       $this->headers[$key] = implode(':', $parts);
     }
 
-    return strlen($header);
+    return strlen($header ?? "");
 
   }
 

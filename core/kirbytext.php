@@ -101,7 +101,7 @@ abstract class KirbytextAbstract {
       return $this->parse();
     } catch(Exception $e) {
       // on massive render bugs the entire text will be returned
-      return $this->field->value;
+      return $this->field->value ?? "";
     }
   }
 

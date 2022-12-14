@@ -211,7 +211,7 @@ function memory() {
  */
 function size($value) {
   if(is_numeric($value)) return $value;
-  if(is_string($value))  return str::length(trim($value));
+  if(is_string($value))  return str::length(trim($value ?? ""));
   if(is_array($value))   return count($value);
   if(is_object($value)) {
     if($value instanceof Countable) return count($value);
@@ -227,7 +227,7 @@ function size($value) {
  * @return string
  */
 function gravatar($email, $size = 256, $default = 'mm') {
-  return 'https://gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?d=' . urlencode($default) . '&s=' . $size;
+  return 'https://gravatar.com/avatar/' . md5(strtolower(trim($email ?? ""))) . '?d=' . urlencode($default) . '&s=' . $size;
 }
 
 /**

@@ -13,6 +13,9 @@ use Whoops\Exception\Frame;
 
 class PlainTextHandlerTest extends TestCase
 {
+    const DEFAULT_EXCEPTION_LINE = 34;
+    const DEFAULT_LINE_OF_CALLER = 65;
+
     /**
      * @throws \InvalidArgumentException        If argument is not null or a LoggerInterface
      * @param  \Psr\Log\LoggerInterface|null    $logger
@@ -32,53 +35,62 @@ class PlainTextHandlerTest extends TestCase
     }
 
     /**
-     * @param  bool  $withTrace
-     * @param  bool  $withTraceArgs
-     * @param  bool  $loggerOnly
+     * @param  bool $withTrace
+     * @param  bool $withTraceArgs
+     * @param  int $traceFunctionArgsOutputLimit
+     * @param  bool $loggerOnly
+     * @param bool $previousOutput
+     * @param  null $exception
      * @return array
      */
     private function getPlainTextFromHandler(
         $withTrace = false,
         $withTraceArgs = false,
         $traceFunctionArgsOutputLimit = 1024,
-        $loggerOnly = false
+        $loggerOnly = false,
+        $previousOutput = false,
+        $exception = null
     ) {
         $handler = $this->getHandler();
         $handler->addTraceToOutput($withTrace);
         $handler->addTraceFunctionArgsToOutput($withTraceArgs);
         $handler->setTraceFunctionArgsOutputLimit($traceFunctionArgsOutputLimit);
+        $handler->addPreviousToOutput($previousOutput);
         $handler->loggerOnly($loggerOnly);
 
         $run = $this->getRunInstance();
         $run->pushHandler($handler);
         $run->register();
 
-        $exception = $this->getException();
-        ob_start();
-        $run->handleException($exception);
+        $exception = $exception ?: $this->getException();
 
-        return ob_get_clean();
+        try {
+            ob_start();
+            $run->handleException($exception);
+        } finally {
+            return ob_get_clean();
+        }
     }
 
     /**
      * @covers Whoops\Handler\PlainTextHandler::__construct
      * @covers Whoops\Handler\PlainTextHandler::setLogger
-     * @expectedException \InvalidArgumentException
      */
     public function testConstructor()
     {
-        $logger = new StdClass(); // guaranteed to be invalid!
-        $this->getHandler($logger);
+        $this->expectExceptionOfType('InvalidArgumentException');
+
+        $this->getHandler(new StdClass());
     }
 
     /**
      * @covers Whoops\Handler\PlainTextHandler::setLogger
-     * @expectedException InvalidArgumentException
      */
     public function testSetLogger()
     {
-        $logger = new StdClass(); // guaranteed to be invalid!
-        $this->getHandler()->setLogger($logger);
+        $this->expectExceptionOfType('InvalidArgumentException');
+
+        $this->getHandler()->setLogger(new StdClass());
     }
 
     /**
@@ -88,26 +100,26 @@ class PlainTextHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
 
-        $handler->addTraceToOutput(true);
-        $this->assertEquals(true, $handler->addTraceToOutput());
+        $this->assertEquals($handler, $handler->addTraceToOutput(true));
+        $this->assertTrue($handler->addTraceToOutput());
 
         $handler->addTraceToOutput(false);
-        $this->assertEquals(false, $handler->addTraceToOutput());
+        $this->assertFalse($handler->addTraceToOutput());
 
         $handler->addTraceToOutput(null);
         $this->assertEquals(null, $handler->addTraceToOutput());
 
         $handler->addTraceToOutput(1);
-        $this->assertEquals(true, $handler->addTraceToOutput());
+        $this->assertTrue($handler->addTraceToOutput());
 
         $handler->addTraceToOutput(0);
-        $this->assertEquals(false, $handler->addTraceToOutput());
+        $this->assertFalse($handler->addTraceToOutput());
 
         $handler->addTraceToOutput('');
-        $this->assertEquals(false, $handler->addTraceToOutput());
+        $this->assertFalse($handler->addTraceToOutput());
 
         $handler->addTraceToOutput('false');
-        $this->assertEquals(true, $handler->addTraceToOutput());
+        $this->assertTrue($handler->addTraceToOutput());
     }
 
     /**
@@ -117,11 +129,11 @@ class PlainTextHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
 
-        $handler->addTraceFunctionArgsToOutput(true);
-        $this->assertEquals(true, $handler->addTraceFunctionArgsToOutput());
+        $this->assertEquals($handler, $handler->addTraceFunctionArgsToOutput(true));
+        $this->assertTrue($handler->addTraceFunctionArgsToOutput());
 
         $handler->addTraceFunctionArgsToOutput(false);
-        $this->assertEquals(false, $handler->addTraceFunctionArgsToOutput());
+        $this->assertFalse($handler->addTraceFunctionArgsToOutput());
 
         $handler->addTraceFunctionArgsToOutput(null);
         $this->assertEquals(null, $handler->addTraceFunctionArgsToOutput());
@@ -133,10 +145,10 @@ class PlainTextHandlerTest extends TestCase
         $this->assertEquals(0, $handler->addTraceFunctionArgsToOutput());
 
         $handler->addTraceFunctionArgsToOutput('');
-        $this->assertEquals(false, $handler->addTraceFunctionArgsToOutput());
+        $this->assertFalse($handler->addTraceFunctionArgsToOutput());
 
         $handler->addTraceFunctionArgsToOutput('false');
-        $this->assertEquals(true, $handler->addTraceFunctionArgsToOutput());
+        $this->assertTrue($handler->addTraceFunctionArgsToOutput());
     }
 
     /**
@@ -166,26 +178,26 @@ class PlainTextHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
 
-        $handler->loggerOnly(true);
-        $this->assertEquals(true, $handler->loggerOnly());
+        $this->assertEquals($handler, $handler->loggerOnly(true));
+        $this->assertTrue($handler->loggerOnly());
 
         $handler->loggerOnly(false);
-        $this->assertEquals(false, $handler->loggerOnly());
+        $this->assertFalse($handler->loggerOnly());
 
         $handler->loggerOnly(null);
         $this->assertEquals(null, $handler->loggerOnly());
 
         $handler->loggerOnly(1);
-        $this->assertEquals(true, $handler->loggerOnly());
+        $this->assertTrue($handler->loggerOnly());
 
         $handler->loggerOnly(0);
-        $this->assertEquals(false, $handler->loggerOnly());
+        $this->assertFalse($handler->loggerOnly());
 
         $handler->loggerOnly('');
-        $this->assertEquals(false, $handler->loggerOnly());
+        $this->assertFalse($handler->loggerOnly());
 
         $handler->loggerOnly('false');
-        $this->assertEquals(true, $handler->loggerOnly());
+        $this->assertTrue($handler->loggerOnly());
     }
 
     /**
@@ -209,7 +221,59 @@ class PlainTextHandlerTest extends TestCase
                 get_class($this->getException()),
                 'test message',
                 __FILE__,
-                31
+                self::DEFAULT_EXCEPTION_LINE
+            ),
+            $text
+        );
+    }
+
+    public function testReturnsWithoutPreviousExceptions()
+    {
+        $text = $this->getPlainTextFromHandler(
+            $withTrace = false,
+            $withTraceArgs = true,
+            $traceFunctionArgsOutputLimit = 1024,
+            $loggerOnly = false,
+            $previousOutput = false,
+            new RuntimeException('Outer exception message', 0, new RuntimeException('Inner exception message'))
+        );
+
+        // Check that the response does not contain Inner exception message:
+        $this->assertStringNotContains(
+            sprintf(
+                "%s: %s in file %s",
+                RuntimeException::class,
+                'Inner exception message',
+                __FILE__
+            ),
+            $text
+        );
+    }
+
+    public function testReturnsWithPreviousExceptions()
+    {
+        $text = $this->getPlainTextFromHandler(
+            $withTrace = false,
+            $withTraceArgs = true,
+            $traceFunctionArgsOutputLimit = 1024,
+            $loggerOnly = false,
+            $previousOutput = true,
+            new RuntimeException('Outer exception message', 0, new RuntimeException('Inner exception message'))
+        );
+
+        // Check that the response has the correct message:
+        $this->assertEquals(
+            sprintf(
+                "%s: %s in file %s on line %d\n" .
+                "%s: %s in file %s on line %d\n",
+                RuntimeException::class,
+                'Outer exception message',
+                __FILE__,
+                261,
+                "\nCaused by\n" . RuntimeException::class,
+                'Inner exception message',
+                __FILE__,
+                261
             ),
             $text
         );
@@ -231,17 +295,17 @@ class PlainTextHandlerTest extends TestCase
         );
 
         // Check that the response has the correct value:
-        $this->assertContains('Stack trace:', $text);
+        $this->assertStringContains('Stack trace:', $text);
 
         // Check that the trace is returned:
-        $this->assertContains(
+        $this->assertStringContains(
             sprintf(
                 '%3d. %s->%s() %s:%d',
                 2,
-                'Whoops\Handler\PlainTextHandlerTest',
+                __CLASS__,
                 'getException',
                 __FILE__,
-                56
+                self::DEFAULT_LINE_OF_CALLER
             ),
             $text
         );
@@ -270,22 +334,22 @@ class PlainTextHandlerTest extends TestCase
         $this->assertGreaterThan(60, count($lines));
 
         // Check that the response has the correct value:
-        $this->assertContains('Stack trace:', $text);
+        $this->assertStringContains('Stack trace:', $text);
 
         // Check that the trace is returned:
-        $this->assertContains(
+        $this->assertStringContains(
             sprintf(
                 '%3d. %s->%s() %s:%d',
                 2,
                 'Whoops\Handler\PlainTextHandlerTest',
                 'getException',
                 __FILE__,
-                56
+                self::DEFAULT_LINE_OF_CALLER
             ),
             $text
         );
         // Check that the trace arguments are returned:
-        $this->assertContains(sprintf(
+        $this->assertStringContains(sprintf(
             '%s  string(%d) "%s"',
             PlainTextHandler::VAR_DUMP_PREFIX,
             strlen('test message'),
@@ -312,23 +376,23 @@ class PlainTextHandlerTest extends TestCase
         );
 
         // Check that the response has the correct value:
-        $this->assertContains('Stack trace:', $text);
+        $this->assertStringContains('Stack trace:', $text);
 
         // Check that the trace is returned:
-        $this->assertContains(
+        $this->assertStringContains(
             sprintf(
                 '%3d. %s->%s() %s:%d',
                 2,
                 'Whoops\Handler\PlainTextHandlerTest',
                 'getException',
                 __FILE__,
-                56
+                self::DEFAULT_LINE_OF_CALLER
             ),
             $text
         );
 
         // Check that the trace arguments are returned:
-        $this->assertContains(sprintf(
+        $this->assertStringContains(sprintf(
             '%s  string(%d) "%s"',
             PlainTextHandler::VAR_DUMP_PREFIX,
             strlen('test message'),

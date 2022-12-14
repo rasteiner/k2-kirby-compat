@@ -164,7 +164,7 @@ class Site extends SiteAbstract {
     $this->language = $this->languages()->data[$lang];
 
     // clean the uri
-    $uri = trim($uri, '/');
+    $uri = trim($uri ?? "", '/');
 
     // alternate version without file extension
     $baseUri = f::name($uri);

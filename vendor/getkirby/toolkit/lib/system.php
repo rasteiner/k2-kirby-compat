@@ -75,7 +75,7 @@ class System {
       $exists = !empty($result);
     }
 
-    return $exists ? trim($result) : false;
+    return $exists ? trim($result ?? "") : false;
 
   }
 

@@ -103,10 +103,10 @@ v::$validators = array(
     return size($value) >= $min;
   },
   'maxLength' => function($value, $max) {
-    return str::length(trim($value)) <= $max;
+    return str::length(trim($value ?? "")) <= $max;
   },
   'minLength' => function($value, $min) {
-    return str::length(trim($value)) >= $min;
+    return str::length(trim($value ?? "")) >= $min;
   },
   'maxWords' => function($value, $max) {
     return v::max(explode(' ', $value), $max);

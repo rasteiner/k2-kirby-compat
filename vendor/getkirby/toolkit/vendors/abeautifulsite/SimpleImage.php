@@ -1238,13 +1238,13 @@ class SimpleImage {
 
             $color = trim($color, '#');
 
-            if (strlen($color) == 6) {
+            if (strlen($color ?? "") == 6) {
                 list($r, $g, $b) = array(
                     $color[0].$color[1],
                     $color[2].$color[3],
                     $color[4].$color[5]
                 );
-            } elseif (strlen($color) == 3) {
+            } elseif (strlen($color ?? "") == 3) {
                 list($r, $g, $b) = array(
                     $color[0].$color[0],
                     $color[1].$color[1],

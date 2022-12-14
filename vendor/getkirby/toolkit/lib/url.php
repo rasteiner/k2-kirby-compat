@@ -132,7 +132,7 @@ class Url {
    */
   public static function query($url = null) {
     if(is_null($url)) $url = static::current();
-    parse_str(parse_url($url, PHP_URL_QUERY), $array);
+    parse_str(parse_url($url, PHP_URL_QUERY) ?? "", $array);
     return $array;
   }
 

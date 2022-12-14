@@ -35,7 +35,11 @@ class Snippet extends \Kirby\Component {
    */
   public function render($name, $data = [], $return = false) {
     if(is_object($data)) $data = ['item' => $data];
-    return tpl::load($this->kirby->registry->get('snippet', $name), $data, $return);
+    $snippet = $this->kirby->registry->get('snippet', $name);
+    if ($snippet) {
+      return tpl::load($snippet, $data, $return);
+    }
+    return "";
   }
 
 }

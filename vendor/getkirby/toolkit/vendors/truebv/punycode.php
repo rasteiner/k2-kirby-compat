@@ -76,14 +76,14 @@ class Punycode
         $input = mb_strtolower($input, $this->encoding);
         $parts = explode('.', $input);
         foreach ($parts as &$part) {
-            $length = strlen($part);
+            $length = strlen($part ?? "");
             if ($length < 1) {
                 throw new LabelOutOfBoundsException(sprintf('The length of any one label is limited to between 1 and 63 octets, but %s given.', $length));
             }
             $part = $this->encodePart($part);
         }
         $output = implode('.', $parts);
-        $length = strlen($output);
+        $length = strlen($output ?? "");
         if ($length > 255) {
             throw new DomainOutOfBoundsException(sprintf('A full domain name is limited to 255 octets (including the separators), %s given.', $length));
         }
@@ -121,7 +121,7 @@ class Punycode
         sort($codePoints['nonBasic']);
 
         $i = 0;
-        $length = mb_strlen($input, $this->encoding);
+        $length = mb_strlen($input ?? "", $this->encoding);
         while ($h < $length) {
             $m = $codePoints['nonBasic'][$i++];
             $delta = $delta + ($m - $n) * ($h + 1);
@@ -156,7 +156,7 @@ class Punycode
             $n++;
         }
         $out = static::PREFIX . $output;
-        $length = strlen($out);
+        $length = strlen($out ?? "");
         if ($length > 63 || $length < 1) {
             throw new LabelOutOfBoundsException(sprintf('The length of any one label is limited to between 1 and 63 octets, but %s given.', $length));
         }
@@ -175,7 +175,7 @@ class Punycode
         $input = strtolower($input);
         $parts = explode('.', $input);
         foreach ($parts as &$part) {
-            $length = strlen($part);
+            $length = strlen($part ?? "");
             if ($length > 63 || $length < 1) {
                 throw new LabelOutOfBoundsException(sprintf('The length of any one label is limited to between 1 and 63 octets, but %s given.', $length));
             }
@@ -187,7 +187,7 @@ class Punycode
             $part = $this->decodePart($part);
         }
         $output = implode('.', $parts);
-        $length = strlen($output);
+        $length = strlen($output ?? "");
         if ($length > 255) {
             throw new DomainOutOfBoundsException(sprintf('A full domain name is limited to 255 octets (including the separators), %s given.', $length));
         }
@@ -215,8 +215,8 @@ class Punycode
             $pos = 0;
         }
 
-        $outputLength = strlen($output);
-        $inputLength = strlen($input);
+        $outputLength = strlen($output ?? "");
+        $inputLength = strlen($input ?? "");
         while ($pos < $inputLength) {
             $oldi = $i;
             $w = 1;
@@ -302,7 +302,7 @@ class Punycode
             'nonBasic' => array(),
         );
 
-        $length = mb_strlen($input, $this->encoding);
+        $length = mb_strlen($input ?? "", $this->encoding);
         for ($i = 0; $i < $length; $i++) {
             $char = mb_substr($input, $i, 1, $this->encoding);
             $code = $this->charToCodePoint($char);

@@ -66,7 +66,7 @@ class FrameCollectionTest extends TestCase
     public function testArrayAccessExists()
     {
         $collection = $this->getFrameCollectionInstance();
-        $this->assertTrue(isset($collection[0]));
+        $this->assertArrayHasKey(0, $collection);
     }
 
     /**
@@ -80,21 +80,25 @@ class FrameCollectionTest extends TestCase
 
     /**
      * @covers Whoops\Exception\FrameCollection::offsetSet
-     * @expectedException Exception
      */
     public function testArrayAccessSet()
     {
         $collection = $this->getFrameCollectionInstance();
+
+        $this->expectExceptionOfType('Exception');
+
         $collection[0] = 'foo';
     }
 
     /**
      * @covers Whoops\Exception\FrameCollection::offsetUnset
-     * @expectedException Exception
      */
     public function testArrayAccessUnset()
     {
         $collection = $this->getFrameCollectionInstance();
+
+        $this->expectExceptionOfType('Exception');
+
         unset($collection[0]);
     }
 
@@ -132,11 +136,12 @@ class FrameCollectionTest extends TestCase
 
     /**
      * @covers Whoops\Exception\FrameCollection::map
-     * @expectedException UnexpectedValueException
      */
     public function testMapFramesEnforceType()
     {
         $frames = $this->getFrameCollectionInstance();
+
+        $this->expectExceptionOfType('UnexpectedValueException');
 
         // Filter out all frames with a line number under 6
         $frames->map(function ($frame) {
@@ -167,7 +172,7 @@ class FrameCollectionTest extends TestCase
         $arr = $frames->getArray();
         $arr[0] = 'foobar';
         $newCopy = $frames->getArray();
-        $this->assertFalse($arr[0] === $newCopy);
+        $this->assertNotSame($arr[0], $newCopy);
     }
 
     /**

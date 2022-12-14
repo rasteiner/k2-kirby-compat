@@ -124,7 +124,7 @@ class Xml {
             $result .= static::create($value2, $key2, $head, $charset, $tab, $nlevel);
           } elseif(!is_numeric($key)) {
             $result .= static::create($value, $key, $head, $charset, $tab, $nlevel);
-          } elseif(trim($value2) != '') {
+          } elseif(trim($value2 ?? "") != '') {
             $value2  = (!strstr($value2, '<![CDATA[') and htmlspecialchars($value2) != $value2) ? '<![CDATA[' . $value2 . ']]>' : $value2;
             $result .= str_repeat($tab, $nlevel) . '<' . $key2 . '>' . $value2 . '</' . $key2 . '>' . PHP_EOL;
           }
@@ -133,7 +133,7 @@ class Xml {
         if(!$mtags && count($value) > 0) {
           $result .= static::create($value, $key, $head, $charset, $tab, $nlevel);
         }
-      } elseif(trim($value) != '') {
+      } elseif(trim($value ?? "") != '') {
         $value   = (!strstr($value, '<![CDATA[') and htmlspecialchars($value) != $value) ? '<![CDATA[' . $value . ']]>' : $value;
         $result .= str_repeat($tab, $nlevel) . (is_numeric($key) ? '' : '<' . $key . '>') . $value . (is_numeric($key) ? '' : '</' . $key . '>') . PHP_EOL;
       }

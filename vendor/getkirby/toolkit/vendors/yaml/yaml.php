@@ -380,7 +380,7 @@ class Spyc {
     $spaces   = str_repeat(' ',$indent);
     foreach ($exploded as $line) {
       $line = trim($line);
-      if (strpos($line, '"') === 0 && strrpos($line, '"') == (strlen($line)-1) || strpos($line, "'") === 0 && strrpos($line, "'") == (strlen($line)-1)) {
+      if (strpos($line, '"') === 0 && strrpos($line, '"') == (strlen($line ?? "")-1) || strpos($line, "'") === 0 && strrpos($line, "'") == (strlen($line ?? "")-1)) {
         $line = substr($line, 1, -1);
       }
       $newValue .= "\n" . $spaces . ($line);
@@ -397,7 +397,7 @@ class Spyc {
   private function _doFolding($value,$indent) {
     // Don't do anything if wordwrap is set to 0
 
-    if ($this->_dumpWordWrap !== 0 && is_string ($value) && strlen($value) > $this->_dumpWordWrap) {
+    if ($this->_dumpWordWrap !== 0 && is_string ($value) && strlen($value ?? "") > $this->_dumpWordWrap) {
       $indent += $this->_dumpIndent;
       $indent = str_repeat(' ',$indent);
       $wrapped = wordwrap($value,$this->_dumpWordWrap,"\n$indent");
@@ -493,7 +493,7 @@ class Spyc {
     for ($i = 0; $i < $cnt; $i++) {
       $line = $Source[$i];
 
-      $this->indent = strlen($line) - strlen(ltrim($line));
+      $this->indent = strlen($line ?? "") - strlen(ltrim($line));
       $tempPath = $this->getParentPathByIndent($this->indent);
       $line = self::stripIndent($line, $this->indent);
       if (self::isComment($line)) continue;
@@ -505,7 +505,7 @@ class Spyc {
         $line = rtrim ($line, $literalBlockStyle . " \n");
         $literalBlock = '';
         $line .= ' '.$this->LiteralPlaceHolder;
-        $literal_block_indent = strlen($Source[$i+1]) - strlen(ltrim($Source[$i+1]));
+        $literal_block_indent = strlen($Source[$i+1] ?? "") - strlen(ltrim($Source[$i+1]));
         while (++$i < $cnt && $this->literalBlockContinues($Source[$i], $this->indent)) {
           $literalBlock = $this->addLiteralLine($literalBlock, $Source[$i], $literalBlockStyle, $literal_block_indent);
         }
@@ -631,7 +631,7 @@ class Spyc {
 
     if (strpos($value,': ')!==false && $first_character != '{') {
       $array = explode(': ',$value);
-      $key   = trim($array[0]);
+      $key   = trim($array[0] ?? "");
       array_shift($array);
       $value = trim(implode(': ',$array));
       $value = $this->_toType($value);
@@ -819,8 +819,8 @@ class Spyc {
   }
 
   private function literalBlockContinues ($line, $lineIndent) {
-    if (!trim($line)) return true;
-    if (strlen($line) - strlen(ltrim($line)) > $lineIndent) return true;
+    if (!trim($line ?? "")) return true;
+    if (strlen($line ?? "") - strlen(ltrim($line)) > $lineIndent) return true;
     return false;
   }
 
@@ -923,7 +923,7 @@ class Spyc {
   }
 
   private static function startsLiteralBlock ($line) {
-    $lastChar = substr (trim($line), -1);
+    $lastChar = substr (trim($line ?? ""), -1);
     if ($lastChar != '>' && $lastChar != '|') return false;
     if ($lastChar == '|') return $lastChar;
     // HTML tags should not be counted as literal blocks.
@@ -933,7 +933,7 @@ class Spyc {
 
   private static function greedilyNeedNextLine($line) {
     $line = trim ($line);
-    if (!strlen($line)) return false;
+    if (!strlen($line ?? "")) return false;
     if (substr ($line, -1, 1) == ']') return false;
     if ($line[0] == '[') return true;
     if (preg_match ('#^[^:]+?:\s*\[#', $line)) return true;
@@ -949,7 +949,7 @@ class Spyc {
     if ($literalBlockStyle == '|') {
       return $literalBlock . $line;
     }
-    if (strlen($line) == 0)
+    if (strlen($line ?? "") == 0)
       return rtrim($literalBlock, ' ') . "\n";
     if ($line == "\n" && $literalBlockStyle == '>') {
       return rtrim ($literalBlock, " \t") . "\n";
@@ -970,7 +970,7 @@ class Spyc {
    }
 
   private static function stripIndent ($line, $indent = -1) {
-    if ($indent == -1) $indent = strlen($line) - strlen(ltrim($line));
+    if ($indent == -1) $indent = strlen($line ?? "") - strlen(ltrim($line));
     return substr ($line, $indent);
   }
 
@@ -1108,7 +1108,7 @@ class Spyc {
 
 
   private function returnArrayElement ($line) {
-     if (strlen($line) <= 1) return array(array()); // Weird %)
+     if (strlen($line ?? "") <= 1) return array(array()); // Weird %)
      $array = array();
      $value   = trim(substr($line,1));
      $value   = $this->_toType($value);

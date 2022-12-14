@@ -50,7 +50,7 @@ class I implements Iterator {
   /** 
    * Moves the cusor to the first element of the array
    */
-  public function rewind() {
+  public function rewind(): void {
     reset($this->data);
   }
 
@@ -59,7 +59,7 @@ class I implements Iterator {
    * 
    * @return mixed
    */
-  public function current() {
+  public function current(): mixed {
     return current($this->data);
   }
 
@@ -68,7 +68,7 @@ class I implements Iterator {
    * 
    * @return string
    */
-  public function key() {
+  public function key(): mixed {
     return key($this->data);
   }
 
@@ -88,8 +88,8 @@ class I implements Iterator {
    * 
    * @return mixed
    */
-  public function next() {
-    return next($this->data);
+  public function next(): void {
+    next($this->data);
   }
 
   /** 
@@ -98,7 +98,7 @@ class I implements Iterator {
    * 
    * @return boolean
    */
-  public function valid() {
+  public function valid(): bool {
     return $this->current() !== false;
   }
 

@@ -1,7 +1,11 @@
-# Kirby v2 Core
+# Compatibility fork of the Kirby 2 Core folder
 
-Please refer to the [Kirby Starterkit](http://github.com/getkirby-v2/starterkit)
-for a complete installation of Kirby 2.
+This fork of the Kirby 2 core folder is to provide compatibility with PHP 8.1 with minimal effort. 
+Functionality is not guaranteed in any way and errors are only "silenced" when encountered. PRs are welcome.
+
+For new projects, please use the latest version of Kirby CMS.
+
+You can find the repository for the Kirby 2 Core folder [here](https://github.com/rasteiner/k2-panel-compat).
 
 ## Kirby 2 - EOL
 

@@ -680,7 +680,7 @@ class F {
    */
   public static function type($file) {
 
-    $length = strlen($file);
+    $length = strlen($file ?? "");
 
     if($length >= 2 && $length <= 4) {
       // use the file name as extension

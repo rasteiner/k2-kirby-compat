@@ -167,7 +167,7 @@ class Parsedown
 
                 foreach ($parts as $part)
                 {
-                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                    $shortage = 4 - mb_strlen($line ?? "", 'utf-8') % 4;
 
                     $line .= str_repeat(' ', $shortage);
                     $line .= $part;
@@ -738,11 +738,11 @@ class Parsedown
                 'markup' => $Line['text'],
             );
 
-            $length = strlen($matches[0]);
+            $length = strlen($matches[0] ?? "");
 
             $remainder = substr($Line['text'], $length);
 
-            if (trim($remainder) === '')
+            if (trim($remainder ?? "") === '')
             {
                 if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
                 {
@@ -847,7 +847,7 @@ class Parsedown
         {
             $alignments = array();
 
-            $divider = $Line['text'];
+            $divider = $Line['text'] ?? "";
 
             $divider = trim($divider);
             $divider = trim($divider, '|');
@@ -882,7 +882,7 @@ class Parsedown
 
             $HeaderElements = array();
 
-            $header = $Block['element']['text'];
+            $header = $Block['element']['text'] ?? "";
 
             $header = trim($header);
             $header = trim($header, '|');
@@ -954,7 +954,7 @@ class Parsedown
         {
             $Elements = array();
 
-            $row = $Line['text'];
+            $row = $Line['text'] ?? "";
 
             $row = trim($row);
             $row = trim($row, '|');
@@ -1131,7 +1131,7 @@ class Parsedown
             $text = preg_replace("/[ ]*\n/", ' ', $text);
 
             return array(
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
                 'element' => array(
                     'name' => 'code',
                     'text' => $text,
@@ -1152,7 +1152,7 @@ class Parsedown
             }
 
             return array(
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
                 'element' => array(
                     'name' => 'a',
                     'text' => $matches[1],
@@ -1187,7 +1187,7 @@ class Parsedown
         }
 
         return array(
-            'extent' => strlen($matches[0]),
+            'extent' => strlen($matches[0] ?? ""),
             'element' => array(
                 'name' => $emphasis,
                 'handler' => 'line',
@@ -1262,7 +1262,7 @@ class Parsedown
         {
             $Element['text'] = $matches[1];
 
-            $extent += strlen($matches[0]);
+            $extent += strlen($matches[0] ?? "");
 
             $remainder = substr($remainder, $extent);
         }
@@ -1280,16 +1280,16 @@ class Parsedown
                 $Element['attributes']['title'] = substr($matches[2], 1, - 1);
             }
 
-            $extent += strlen($matches[0]);
+            $extent += strlen($matches[0] ?? "");
         }
         else
         {
             if (preg_match('/^\s*\[(.*?)\]/', $remainder, $matches))
             {
-                $definition = strlen($matches[1]) ? $matches[1] : $Element['text'];
+                $definition = strlen($matches[1] ?? "") ? $matches[1] : $Element['text'];
                 $definition = strtolower($definition);
 
-                $extent += strlen($matches[0]);
+                $extent += strlen($matches[0] ?? "");
             }
             else
             {
@@ -1324,7 +1324,7 @@ class Parsedown
         {
             return array(
                 'markup' => $matches[0],
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
             );
         }
 
@@ -1332,7 +1332,7 @@ class Parsedown
         {
             return array(
                 'markup' => $matches[0],
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
             );
         }
 
@@ -1340,7 +1340,7 @@ class Parsedown
         {
             return array(
                 'markup' => $matches[0],
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
             );
         }
     }
@@ -1376,7 +1376,7 @@ class Parsedown
         if ($Excerpt['text'][1] === '~' and preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $Excerpt['text'], $matches))
         {
             return array(
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
                 'element' => array(
                     'name' => 'del',
                     'text' => $matches[1],
@@ -1398,7 +1398,7 @@ class Parsedown
             $url = $matches[0][0];
 
             $Inline = array(
-                'extent' => strlen($matches[0][0]),
+                'extent' => strlen($matches[0][0] ?? ""),
                 'position' => $matches[0][1],
                 'element' => array(
                     'name' => 'a',
@@ -1420,7 +1420,7 @@ class Parsedown
             $url = $matches[1];
 
             return array(
-                'extent' => strlen($matches[0]),
+                'extent' => strlen($matches[0] ?? ""),
                 'element' => array(
                     'name' => 'a',
                     'text' => $url,
@@ -1521,7 +1521,7 @@ class Parsedown
 
     protected function li($lines)
     {
-        $markup = $this->lines($lines);
+        $markup = $this->lines($lines) ?? "";
 
         $trimmedMarkup = trim($markup);
 
@@ -1608,9 +1608,9 @@ class Parsedown
 
     protected static function striAtStart($string, $needle)
     {
-        $len = strlen($needle);
+        $len = strlen($needle ?? "");
 
-        if ($len > strlen($string))
+        if ($len > strlen($string ?? ""))
         {
             return false;
         }

@@ -61,11 +61,11 @@ class KirbytextTest extends KirbyTestCase {
     ';
 
     // activated markdown breaks
-    $value = $this->kt(trim($text), $markdownExtra, true);
+    $value = $this->kt(trim($text ?? ""), $markdownExtra, true);
     $this->assertEquals('<p>A<br />' . PHP_EOL . 'B</p>', (string)$value);
 
     // deactivated markdown breaks, no spaces
-    $value = $this->kt(trim($text), $markdownExtra, false);
+    $value = $this->kt(trim($text ?? ""), $markdownExtra, false);
     $this->assertEquals('<p>A' . PHP_EOL . 'B</p>', (string)$value);
 
     // text with three spaces at the end of the line
@@ -74,7 +74,7 @@ class KirbytextTest extends KirbyTestCase {
       B
     ';
 
-    $value = $this->kt(trim($text), $markdownExtra, false);
+    $value = $this->kt(trim($text ?? ""), $markdownExtra, false);
     $this->assertEquals('<p>A<br />' . PHP_EOL . 'B</p>', (string)$value);
 
   }

@@ -224,7 +224,7 @@ class Str {
       case 'php':
         return @unserialize($string);
       case 'query':
-        @parse_str($string, $result);
+        @parse_str($string ?? "", $result);
         return $result;
       default:
         return $string;
@@ -362,7 +362,7 @@ class Str {
    */
   public static function excerpt($string, $chars = 140, $removehtml = true, $rep='…') {
     if($removehtml) $string = strip_tags($string);
-    $string = str_replace(PHP_EOL, ' ', trim($string));
+    $string = str_replace(PHP_EOL, ' ', trim($string ?? ""));
     if(static::length($string) <= $chars) return $string;
     return $chars == 0 ? $string : static::substr($string, 0, strrpos(static::substr($string, 0, $chars), ' ')) . $rep;
   }
@@ -425,7 +425,7 @@ class Str {
    * @return string
    */
   public static function length($str) {
-    return MB ? mb_strlen($str, 'UTF-8') : strlen($str);
+    return MB ? mb_strlen($str ?? "", 'UTF-8') : strlen($str ?? "");
   }
 
   /**
@@ -471,7 +471,7 @@ class Str {
 
     // collect characters until we have our required length
     $result = '';
-    while(($currentLength = strlen($result)) < $length) {
+    while(($currentLength = strlen($result ?? "")) < $length) {
       $missing = $length - $currentLength;
       $bytes = random_bytes($missing);
       $result .= substr(preg_replace($regex, '', base64_encode($bytes)), 0, $missing);
@@ -511,14 +511,14 @@ class Str {
     $separator = $separator !== null ? $separator : static::$defaults['slug']['separator'];
     $allowed   = $allowed   !== null ? $allowed   : static::$defaults['slug']['allowed'];
 
-    $string = trim($string);
+    $string = trim($string ?? "");
     $string = static::lower($string);
     $string = static::ascii($string);
 
     // replace spaces with simple dashes
     $string = preg_replace('![^' . $allowed . ']!i', $separator, $string);
 
-    if(strlen($separator) > 0) {
+    if(strlen($separator ?? "") > 0) {
       // remove double separators
       $string = preg_replace('![' . preg_quote($separator) . ']{2,}!', $separator, $string);
     }
@@ -548,12 +548,12 @@ class Str {
 
     if(is_array($string)) return $string;
 
-    $string = trim($string, $separator);
+    $string = trim($string ?? "", $separator);
     $parts  = explode($separator, $string);
     $out    = array();
 
     foreach($parts AS $p) {
-      $p = trim($p);
+      $p = trim($p ?? "");
       if(static::length($p) > 0 && static::length($p) >= $length) $out[] = $p;
     }
 
@@ -942,10 +942,10 @@ class Str {
         for($i = 0; $i < $r['limit']; $i++) {
           $pos = strpos($string, $r['search'], $pos + 1);
           if(is_int($pos)) {
-            $string = substr_replace($string, $r['replace'], $pos, strlen($r['search']));
+            $string = substr_replace($string, $r['replace'], $pos, strlen($r['search'] ?? ""));
 
             // adapt $pos to the now changed offset
-            $pos = $pos + strlen($r['replace']) - strlen($r['search']);
+            $pos = $pos + strlen($r['replace'] ?? "") - strlen($r['search'] ?? "");
           } else {
             // no more match in the string
             break;
